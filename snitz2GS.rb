@@ -87,6 +87,7 @@ Topic.all.each do |t|
   end
   
   # find some tags
+  # these tags are specific to our content, you should modify as needed.
   tags = []
   tags << 'cablecast' if t.T_SUBJECT.downcase.include? 'cablecast'
   tags << 'carousel' if t.T_SUBJECT.downcase.include? 'carousel'
@@ -112,6 +113,8 @@ end
 ### Replies
 reply_list = []
 Reply.all.each do |r| 
+  # For some reason, r.REPLY_ID throws a method_missing error. Don't know why.
+  # More details here: http://johnreilly.tumblr.com/post/39200511/strange-activerecord-error
   next if rejected_reply_ids.include? r["REPLY_ID"]
   reply = {
     'user_id'       => r.member.MEMBER_ID,
