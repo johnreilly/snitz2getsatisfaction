@@ -2,9 +2,10 @@ require 'rubygems'
 require 'activerecord'
 
 # Add ids to these lists to skip them during export.
-rejected_member_ids = [1]
+rejected_member_ids = [1] #skip the administrator
 rejected_topic_ids  = []
 rejected_reply_ids  = []
+rejected_forum_ids  = [29, 30, 33]
 
 #############################
 ### Active Record Setup
@@ -72,6 +73,7 @@ end
 topic_list = []
 Topic.all.each do |t| 
   next if rejected_topic_ids.include? t.TOPIC_ID
+  next if rejected_forum_ids.include? t.FORUM_ID
   
   #figure out what style this topic is...
   style = 'discussion'
@@ -91,11 +93,24 @@ Topic.all.each do |t|
   tags = []
   tags << 'cablecast' if t.T_SUBJECT.downcase.include? 'cablecast'
   tags << 'carousel' if t.T_SUBJECT.downcase.include? 'carousel'
+  tags << 'cablecast' if t.T_MESSAGE.downcase.include? 'cablecast'
+  tags << 'carousel' if t.T_MESSAGE.downcase.include? 'carousel'
   tags << 'frontdoor' if t.T_SUBJECT.downcase.include? 'frontdoor'
   tags << 'frontdoor' if t.T_SUBJECT.downcase.include? 'front door'
   tags << 'release' if t.T_SUBJECT.downcase.include? 'announcing ca'
   tags << 'cablecast' if t.T_SUBJECT.downcase.include? 'autopilot'
+  tags << 'announcement' if t.T_SUBJECT.downcase.include? 'announc'
   tags.uniq!
+  
+  # associate with products, based on the forum name, topic subject, and topic message
+  products = []
+  products << 'cablecast' if t.forum.F_SUBJECT.downcase.include? 'cablecast'
+  products << 'carousel' if t.forum.F_SUBJECT.downcase.include? 'carousel'
+  products << 'cablecast' if t.T_SUBJECT.downcase.include? 'cablecast'
+  products << 'carousel' if t.T_SUBJECT.downcase.include? 'carousel'
+  products << 'cablecast' if t.T_MESSAGE.downcase.include? 'cablecast'
+  products << 'carousel' if t.T_MESSAGE.downcase.include? 'carousel'
+  products.uniq!
   
   topic = {
     'user_id'           => t.member.MEMBER_ID,
@@ -104,6 +119,7 @@ Topic.all.each do |t|
     'created_at'        => DateTime.parse(t.T_DATE).to_s(:db),
     'style'             => style,
     'tags'              => tags.join(','),
+    'products'          => products.join(','),
     'id'                => t.TOPIC_ID,
     'opaque_id'         => t.TOPIC_ID
   }
@@ -116,6 +132,8 @@ Reply.all.each do |r|
   # For some reason, r.REPLY_ID throws a method_missing error. Don't know why.
   # More details here: http://johnreilly.tumblr.com/post/39200511/strange-activerecord-error
   next if rejected_reply_ids.include? r["REPLY_ID"]
+  next if rejected_forum_ids.include? r["FORUM_ID"]
+  
   reply = {
     'user_id'       => r.member.MEMBER_ID,
     'created_at'    => DateTime.parse(r["R_DATE"]).to_s(:db),
