@@ -98,8 +98,22 @@ Topic.all.each do |t|
   tags << 'frontdoor' if t.T_SUBJECT.downcase.include? 'frontdoor'
   tags << 'frontdoor' if t.T_SUBJECT.downcase.include? 'front door'
   tags << 'release' if t.T_SUBJECT.downcase.include? 'announcing ca'
-  tags << 'cablecast' if t.T_SUBJECT.downcase.include? 'autopilot'
+  tags << 'autopilot' if t.T_SUBJECT.downcase.include? 'autopilot'
   tags << 'announcement' if t.T_SUBJECT.downcase.include? 'announc'
+  tags << 'bug' if t.T_SUBJECT.downcase.include? 'bug'
+  tags << 'template' if t.T_SUBJECT.downcase.include? 'template'
+  tags << 'video' if t.T_SUBJECT.downcase.include? 'video'
+  tags << 'audio' if t.T_SUBJECT.downcase.include? 'audio'
+  tags << 'rss' if t.T_SUBJECT.downcase.include? 'rss'
+  tags << 'cabledisplay' if t.T_SUBJECT.downcase.include? 'cabledisplay'
+  tags << 'cabledisplay' if t.T_SUBJECT.downcase.include? 'cable display'
+  tags << 'vod' if t.T_SUBJECT.downcase.include? 'vod'
+  tags << 'publicsite' if t.T_SUBJECT.downcase.include? 'public'
+  tags << 'stream' if t.T_SUBJECT.downcase.include? 'stream'
+  tags << 'schedule' if t.T_SUBJECT.downcase.include? 'schedule'
+  tags << 'vsx' if t.T_SUBJECT.downcase.include? 'vsx'
+  tags << 'vs4' if t.T_SUBJECT.downcase.include? 'vs4'
+  tags << 'sx' if t.T_SUBJECT.downcase.include? ' sx' #space is intentional.
   tags.uniq!
   
   # associate with products, based on the forum name, topic subject, and topic message
